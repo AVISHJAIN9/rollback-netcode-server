@@ -1,31 +1,28 @@
-use crate::simulation::state::WorldState;
+use std::collections::HashMap;
 
-/// Blake3 SIMD state checksum verifier and desync incident detector.
-/// Complies with FR-014 and FR-015.
-pub struct DesyncDetector;
+/// Authoritative checksum comparator and divergence detector.
+/// Complies with FR-010 and FR-011.
+#[derive(Debug, Default)]
+pub struct DesyncDetector {
+    pub authoritative_hashes: HashMap<u64, u32>,
+}
 
 impl DesyncDetector {
-    pub fn compute_checksum(state: &WorldState) -> u64 {
-        let bytes = state.as_bytes();
-        let hash = blake3::hash(bytes);
-        let mut out = [0u8; 8];
-        out.copy_from_slice(&hash.as_bytes()[0..8]);
-        u64::from_le_bytes(out)
+    pub fn new() -> Self {
+        Self {
+            authoritative_hashes: HashMap::new(),
+        }
     }
 
-    pub fn verify_state(
-        frame: u64,
-        server_state: &WorldState,
-        client_checksum: u64,
-    ) -> Result<(), String> {
-        let server_checksum = Self::compute_checksum(server_state);
-        if server_checksum != client_checksum {
-            Err(format!(
-                "Desync at frame {}: Server checksum {:X} != Client checksum {:X}",
-                frame, server_checksum, client_checksum
-            ))
+    pub fn record_authoritative_hash(&mut self, frame: u64, hash: u32) {
+        self.authoritative_hashes.insert(frame, hash);
+    }
+
+    pub fn verify_client_hash(&self, frame: u64, client_hash: u32) -> Result<bool, &'static str> {
+        if let Some(&auth_hash) = self.authoritative_hashes.get(&frame) {
+            Ok(auth_hash == client_hash)
         } else {
-            Ok(())
+            Err("Frame checksum not available in server history")
         }
     }
 }

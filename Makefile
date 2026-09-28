@@ -7,6 +7,8 @@ setup:
 	@echo "==> Setup complete."
 
 test:
+	@echo "==> Running Rust Backend Test Suite..."
+	@cd backend && cargo test
 	@echo "==> [Gate G1 & G2] 1,000,000 Step Determinism & Golden State Verification..."
 	@python3 tests/test_determinism.py
 	@python3 tests/test_golden_determinism.py
@@ -29,7 +31,9 @@ test:
 	@echo "=================================================================="
 
 lint:
-	@echo "==> Checking code syntax..."
+	@echo "==> Checking Rust Backend (clippy & fmt)..."
+	@cd backend && cargo fmt --check && cargo clippy -- -D warnings
+	@echo "==> Checking Python syntax..."
 	@python3 -m py_compile tests/*.py aiml/**/*.py
 	@echo "==> Syntax clean."
 

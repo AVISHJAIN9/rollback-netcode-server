@@ -6,6 +6,12 @@ pub struct RingBuffer<T: Clone + Default, const CAP: usize = 128> {
     head_frame: u64,
 }
 
+impl<T: Clone + Default, const CAP: usize> Default for RingBuffer<T, CAP> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Clone + Default, const CAP: usize> RingBuffer<T, CAP> {
     pub fn new() -> Self {
         Self {
