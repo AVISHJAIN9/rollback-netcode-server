@@ -7,18 +7,31 @@ setup:
 	@echo "==> Setup complete."
 
 test:
-	@echo "==> Running Determinism & Core Netcode Test Suite..."
+	@echo "==> [Gate G1 & G2] 1,000,000 Step Determinism & Golden State Verification..."
 	@python3 tests/test_determinism.py
+	@python3 tests/test_golden_determinism.py
 	@python3 tests/test_rollback.py
-	@echo "==> Running AIML Model Evaluation & Baseline Checks..."
-	@python3 aiml/eval/evaluate_cheat_detection.py
-	@python3 aiml/eval/evaluate_jitter_predictor.py
-	@echo "==> All Tests Passed."
+	@echo "==> [Gate G3] Multiplayer Session & Reconnect Verification..."
+	@python3 tests/test_multiplayer_session.py
+	@echo "==> [Gate G4] Security, Rate Limiting & Fuzzing Verification..."
+	@python3 tests/test_security_fuzzing.py
+	@echo "==> [Gate G5] Network Chaos & Packet Loss Redundancy Verification..."
+	@python3 tests/test_chaos_network.py
+	@echo "==> [Gate G6] AIML Models, Safety Guardrails & MLOps Verification..."
+	@python3 aiml/eval/evaluate_all_models.py
+	@echo "==> [Gate G7] E2E Multiplayer Lifecycle Verification..."
+	@python3 tests/test_e2e_flow.py
+	@echo "==> [Gate G8] Client SDK Smoke Verification..."
+	@python3 tests/test_sdk_smoke.py
+	@echo ""
+	@echo "=================================================================="
+	@echo " ALL RELEASE GATES G1 THROUGH G8 VERIFIED 100% GREEN."
+	@echo "=================================================================="
 
 lint:
-	@echo "==> Checking code styling & formatting..."
+	@echo "==> Checking code syntax..."
 	@python3 -m py_compile tests/*.py aiml/**/*.py
-	@echo "==> Lint check clean."
+	@echo "==> Syntax clean."
 
 bench:
 	@echo "==> Executing simulation benchmarks..."
