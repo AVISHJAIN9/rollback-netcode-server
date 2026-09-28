@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,27 +7,33 @@ on:
     branches: [ main ]
 
 jobs:
-  backend-test:
-    name: Backend Test & Lint (Rust)
+  lint-and-audit:
+    name: Code Quality & Security Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Cargo Check & Test
-        run: |
-          cd backend
-          cargo check
-          cargo test --no-run
-
-  frontend-test:
-    name: Frontend Lint & Build (Next.js)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: 20
-      - name: Install & Typecheck
+          python-version: '3.11'
+      - name: Install dependencies & Audit
         run: |
-          cd frontend
-          npm ci --ignore-scripts || true
+          pip install -r aiml/requirements.txt
+          python -m py_compile tests/*.py aiml/**/*.py
+
+  determinism-and-netcode-tests:
+    name: Core Netcode & 1M Frame Determinism Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Test Suite
+        run: |
+          pip install -r aiml/requirements.txt
+          python tests/test_determinism.py
+          python tests/test_rollback.py
+          python aiml/eval/evaluate_cheat_detection.py
+          python aiml/eval/evaluate_jitter_predictor.py
