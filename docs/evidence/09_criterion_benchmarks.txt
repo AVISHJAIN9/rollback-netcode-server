@@ -59,3 +59,55 @@ Found 12 outliers among 100 measurements (12.00%)
 Benchmarking resimulation_depth_1
 Benchmarking resimulation_depth_1: Warming up for 3.0000 s
 Benchmarking resimulation_depth_1: Collecting 100 samples in estimated 5.0011 s (4.6M iterations)
+Benchmarking resimulation_depth_1: Analyzing
+resimulation_depth_1    time:   [1.0524 µs 1.0627 µs 1.0764 µs]
+                        change: [-44.616% -33.866% -23.811%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 9 outliers among 100 measurements (9.00%)
+  3 (3.00%) high mild
+  6 (6.00%) high severe
+
+Benchmarking resimulation_depth_2
+Benchmarking resimulation_depth_2: Warming up for 3.0000 s
+Benchmarking resimulation_depth_2: Collecting 100 samples in estimated 5.0055 s (2.7M iterations)
+Benchmarking resimulation_depth_2: Analyzing
+resimulation_depth_2    time:   [1.8394 µs 1.8556 µs 1.8818 µs]
+                        change: [-21.261% -14.967% -8.1592%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 17 outliers among 100 measurements (17.00%)
+  5 (5.00%) low mild
+  8 (8.00%) high mild
+  4 (4.00%) high severe
+
+Benchmarking resimulation_depth_4
+Benchmarking resimulation_depth_4: Warming up for 3.0000 s
+Benchmarking resimulation_depth_4: Collecting 100 samples in estimated 5.0040 s (1.5M iterations)
+Benchmarking resimulation_depth_4: Analyzing
+resimulation_depth_4    time:   [3.4563 µs 3.5230 µs 3.6186 µs]
+                        change: [-4.6685% +0.2152% +3.7048%] (p = 0.94 > 0.05)
+                        No change in performance detected.
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) high mild
+  1 (1.00%) high severe
+
+Benchmarking resimulation_depth_8
+Benchmarking resimulation_depth_8: Warming up for 3.0000 s
+Benchmarking resimulation_depth_8: Collecting 100 samples in estimated 5.0062 s (813k iterations)
+Benchmarking resimulation_depth_8: Analyzing
+resimulation_depth_8    time:   [6.1402 µs 6.2814 µs 6.4830 µs]
+                        change: [-10.618% -6.5063% -2.4646%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 5 outliers among 100 measurements (5.00%)
+  2 (2.00%) low mild
+  3 (3.00%) high severe
+
+Benchmarking resimulation_depth_12
+Benchmarking resimulation_depth_12: Warming up for 3.0000 s
+Benchmarking resimulation_depth_12: Collecting 100 samples in estimated 5.0281 s (545k iterations)
+Benchmarking resimulation_depth_12: Analyzing
+resimulation_depth_12   time:   [8.9382 µs 9.0104 µs 9.0897 µs]
+                        change: [-28.139% -17.921% -9.3966%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) low mild
+
