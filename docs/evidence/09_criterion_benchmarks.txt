@@ -1,0 +1,61 @@
+warning: unused variable: `t`
+  --> ../benchmarks/benches/simulation_bench.rs:25:21
+   |
+25 |                 for t in 1..=depth {
+   |                     ^ help: if this is intentional, prefix it with an underscore: `_t`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `rollback-netcode-server` (bench "simulation_bench") generated 1 warning (run `cargo fix --bench "simulation_bench" -p rollback-netcode-server` to apply 1 suggestion)
+    Finished `bench` profile [optimized] target(s) in 0.18s
+     Running unittests src/lib.rs (target/release/deps/rollback_netcode_server-2433094fbd6b2391)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/rollback_netcode_server-1c85416ce5bb28ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running ../benchmarks/benches/simulation_bench.rs (target/release/deps/simulation_bench-645c26c33d6d7d52)
+Gnuplot not found, using plotters backend
+Benchmarking simulation_step
+Benchmarking simulation_step: Warming up for 3.0000 s
+Benchmarking simulation_step: Collecting 100 samples in estimated 5.0000 s (619M iterations)
+Benchmarking simulation_step: Analyzing
+simulation_step         time:   [7.1727 ns 7.8211 ns 8.5534 ns]
+                        change: [-56.475% -51.258% -45.297%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 10 outliers among 100 measurements (10.00%)
+  3 (3.00%) high mild
+  7 (7.00%) high severe
+
+Benchmarking snapshot_save
+Benchmarking snapshot_save: Warming up for 3.0000 s
+Benchmarking snapshot_save: Collecting 100 samples in estimated 5.0007 s (15M iterations)
+Benchmarking snapshot_save: Analyzing
+snapshot_save           time:   [326.61 ns 338.56 ns 354.24 ns]
+                        change: [-37.413% -29.827% -21.147%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 11 outliers among 100 measurements (11.00%)
+  2 (2.00%) high mild
+  9 (9.00%) high severe
+
+Benchmarking snapshot_restore
+Benchmarking snapshot_restore: Warming up for 3.0000 s
+Benchmarking snapshot_restore: Collecting 100 samples in estimated 5.0000 s (2.2B iterations)
+Benchmarking snapshot_restore: Analyzing
+snapshot_restore        time:   [2.0525 ns 2.1712 ns 2.3161 ns]
+                        change: [-25.204% -19.651% -13.468%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 12 outliers among 100 measurements (12.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+  10 (10.00%) high severe
+
+Benchmarking resimulation_depth_1
+Benchmarking resimulation_depth_1: Warming up for 3.0000 s
+Benchmarking resimulation_depth_1: Collecting 100 samples in estimated 5.0011 s (4.6M iterations)

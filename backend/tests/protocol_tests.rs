@@ -94,6 +94,12 @@ fn test_error_and_kick_roundtrip() {
 }
 
 proptest! {
+    #![proptest_config(ProptestConfig::with_cases(
+        std::env::var("PROPTEST_CASES")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(10_000)
+    ))]
     #[test]
     fn proptest_input_frame_arbitrary(
         player_id in 0u8..2,

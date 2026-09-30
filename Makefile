@@ -30,12 +30,17 @@ test:
 	@echo " ALL RELEASE GATES G1 THROUGH G8 VERIFIED 100% GREEN."
 	@echo "=================================================================="
 
-lint:
+lint: check-floats
 	@echo "==> Checking Rust Backend (clippy & fmt)..."
 	@cd backend && cargo fmt --check && cargo clippy -- -D warnings
 	@echo "==> Checking Python syntax..."
 	@python3 -m py_compile tests/*.py aiml/**/*.py
 	@echo "==> Syntax clean."
+
+check-floats:
+	@echo "==> Verifying Zero-Float Invariant in math/ and simulation/..."
+	@! grep -rnE "\b(f32|f64)\b" backend/src/math/ backend/src/simulation/
+	@echo "==> [PASS] Zero IEEE-754 floats in simulation code."
 
 bench:
 	@echo "==> Executing simulation benchmarks..."

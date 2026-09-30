@@ -1,53 +1,82 @@
-/// Circular ring buffer of fixed capacity (default 128 frames).
+use crate::simulation::state::GameState;
+
+pub const DEFAULT_RING_CAPACITY: usize = 128;
+
+/// Bounded ring buffer for state snapshots keyed by tick.
 /// Complies with FR-005, FR-006, and FR-007.
-pub struct RingBuffer<T: Clone + Default, const CAP: usize = 128> {
-    slots: [T; CAP],
-    checksums: [u64; CAP],
-    head_frame: u64,
+#[derive(Clone, Debug)]
+pub struct SnapshotRing<const CAP: usize = DEFAULT_RING_CAPACITY> {
+    slots: [Option<GameState>; CAP],
+    checksums: [u32; CAP],
+    head_tick: u32,
+    tail_tick: u32,
 }
 
-impl<T: Clone + Default, const CAP: usize> Default for RingBuffer<T, CAP> {
+impl<const CAP: usize> Default for SnapshotRing<CAP> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T: Clone + Default, const CAP: usize> RingBuffer<T, CAP> {
+impl<const CAP: usize> SnapshotRing<CAP> {
     pub fn new() -> Self {
         Self {
-            slots: std::array::from_fn(|_| T::default()),
-            checksums: [0u64; CAP],
-            head_frame: 0,
+            slots: std::array::from_fn(|_| None),
+            checksums: [0u32; CAP],
+            head_tick: 0,
+            tail_tick: 0,
         }
     }
 
     #[inline(always)]
-    fn slot_index(frame: u64) -> usize {
-        (frame as usize) & (CAP - 1)
+    fn slot_index(tick: u32) -> usize {
+        (tick as usize) % CAP
     }
 
-    pub fn insert(&mut self, frame: u64, state: T, checksum: u64) {
-        let idx = Self::slot_index(frame);
-        self.slots[idx] = state;
+    pub fn save(&mut self, state: GameState) {
+        let tick = state.tick;
+        let checksum = state.compute_checksum();
+        let idx = Self::slot_index(tick);
+
+        self.slots[idx] = Some(state);
         self.checksums[idx] = checksum;
-        if frame > self.head_frame {
-            self.head_frame = frame;
+
+        if tick > self.head_tick {
+            self.head_tick = tick;
+            if self.head_tick >= (CAP as u32) {
+                self.tail_tick = self.head_tick - (CAP as u32) + 1;
+            }
         }
     }
 
-    pub fn get(&self, frame: u64) -> Option<&T> {
-        if frame + (CAP as u64) <= self.head_frame || frame > self.head_frame {
-            None
-        } else {
-            Some(&self.slots[Self::slot_index(frame)])
+    pub fn restore(&self, tick: u32) -> Option<GameState> {
+        if tick < self.tail_tick || tick > self.head_tick {
+            return None;
+        }
+        let idx = Self::slot_index(tick);
+        match &self.slots[idx] {
+            Some(state) if state.tick == tick => Some(state.clone()),
+            _ => None,
         }
     }
 
-    pub fn get_checksum(&self, frame: u64) -> Option<u64> {
-        if frame + (CAP as u64) <= self.head_frame || frame > self.head_frame {
-            None
-        } else {
-            Some(self.checksums[Self::slot_index(frame)])
+    pub fn get_checksum(&self, tick: u32) -> Option<u32> {
+        if tick < self.tail_tick || tick > self.head_tick {
+            return None;
         }
+        let idx = Self::slot_index(tick);
+        Some(self.checksums[idx])
+    }
+
+    pub fn head_tick(&self) -> u32 {
+        self.head_tick
+    }
+
+    pub fn tail_tick(&self) -> u32 {
+        self.tail_tick
+    }
+
+    pub fn is_retained(&self, tick: u32) -> bool {
+        tick >= self.tail_tick && tick <= self.head_tick
     }
 }
